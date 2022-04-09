@@ -1,0 +1,11 @@
+---
+title: Anatomy of a Shopping Cart
+date: '2020-12-21'
+tags: ['nextjs', 'react', 'e-commerce']
+draft: false
+summary: 'Breaking down a Shopping Cart into React components.'
+---
+
+# Introduction
+
+The essential components of a shopping cart.

@@ -1,7 +1,7 @@
 const siteMetadata = {
-  title: "Tom's E-Commerce Web Development Blog",
+  title: "Tom's Web Development Blog",
   author: 'Thomas Swokowski',
-  headerTitle: 'thomasswokowski.dev',
+  headerTitle: 'tomswokowski.dev',
   description: 'An e-commerce web development blog',
   language: 'en-us',
   theme: 'system', // system, dark or light

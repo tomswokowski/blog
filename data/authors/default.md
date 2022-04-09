@@ -1,8 +1,7 @@
 ---
 name: Thomas Swokowski
-avatar: /static/images/avatar.png
+avatar: /static/images/tom.jpeg
 occupation: Software Developer
-company: Sports Endeavors
 email: thomas@swokowski.com
 twitter: https://twitter.com/thomasswokowski
 linkedin: https://www.linkedin.com/in/thomasswokowski

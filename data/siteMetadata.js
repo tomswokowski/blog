@@ -12,7 +12,7 @@ const siteMetadata = {
   socialBanner: '/static/images/twitter-card.png',
   email: 'thomasswokowski@gmail.com',
   github: 'https://github.com/tomswokowski',
-  twitter: 'https://github.com/tomswokowski',
+  twitter: 'https://twitter.com/thomasswokowski',
   linkedin: 'https://www.linkedin.com/in/thomasswokowski',
   locale: 'en-US',
   analytics: {

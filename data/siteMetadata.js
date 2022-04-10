@@ -2,7 +2,7 @@ const siteMetadata = {
   title: "Tom's Web Development Blog",
   author: 'Thomas Swokowski',
   headerTitle: 'tomswokowski.dev',
-  description: 'An e-commerce web development blog',
+  description: 'A web development blog',
   language: 'en-us',
   theme: 'system', // system, dark or light
   siteUrl: 'https://tomswokowski.dev',

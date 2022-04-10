@@ -24,7 +24,7 @@ export default function Home({ posts }) {
             Hello, I'm Tom
           </h1>
           <h2 className="prose text-lg text-gray-600 dark:text-gray-400">
-            {`Welcome to my blog. I'm a software developer from Wisconsin, USA. Here I talk about web development and e-commerce. I like building `}
+            {`Welcome to my blog. I'm a software developer from Wisconsin. Here I talk about programming and web development. I like building `}
             <Link href="/projects">projects</Link>
             {' and '}
             <Link href="/blog">blogging</Link>

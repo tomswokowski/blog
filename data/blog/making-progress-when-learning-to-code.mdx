@@ -1,0 +1,89 @@
+---
+title: How to Make Progress when Learning to Code
+date: '2022-04-22'
+tags: ['programming', 'react']
+draft: false
+summary: 'In order to get better at coding, learn any prerequisites deeply and isolate the concepts as much as possible.'
+layout: PostSimple
+bibliography: references-data.bib
+canonicalUrl: https://tomswokowski.dev/blog/making-progress-when-learning-to-code/
+---
+
+## Table of Contents
+
+<TOCInline toc={props.toc} exclude="Table of Contents" toHeading={2} />
+
+## TLDR (Too long, didn’t read)
+
+In order to get better at coding, learn any prerequisites deeply and isolate the concepts as much as possible. If you want to grow fast as a developer, learn concepts slowly and thoroughly, not quickly and superficially.
+
+## Learning to code - what not to do
+
+The first line of code I ever wrote was in the late summer of 2014 a few months after I graduated with a Bachelor’s degree in Finance from the University of Wisconsin - Milwaukee. This timeline coincided with the release of Apple’s new programming language called Swift, which was officially released on June 2nd, 2014. At the time, native mobile applications were exploding in popularity and independent developers were now easily able to code their app in Swift, release it to the App Store, and start making revenue almost immediately thereafter. Although I didn’t even know the most basic thing about coding, I was so intrigued by this concept and I immediately began doing all of the math in my head on how I could become financially free by learning to build mobile applications for Apple’s App Store. “What if someday I could get 1,000 users each paying $10 a month for my app? What if the number of users increased to 2,000?” These were the types of thoughts constantly running through my head. In my mind, the possibilities were endless and there would be a lot of time on the golf course in my near future.
+
+As a result of this passionate but wishful thinking, I easily got sucked into the clever and enticing marketing ads from various newly released Udemy courses that promised to teach me how to build an iPhone app and release it to the App Store from scratch. Perfect, I thought. This is exactly what I was looking for. Taking this course was surely my ticket to financial freedom.
+
+The full story of how this plan turned out and how flawed my initial misconceptions around coding actually were is a story for another day, but needless to say this was not a winning strategy. Unfortunately for me, it took me almost four years to realize it and I finally broke out of this trap in 2018 when I decided to go back to Auburn University and get a Computer Science degree. This is after investing and wasting thousands of hours into over a hundred courses and tutorials. In the end, I essentially got almost nothing out of it because my skills were basically the same as when I started. Well, I guess that’s not entirely true. I didn’t fail, I just discovered ten thousand ways it won’t work as Thomas Edison once said. It’s a miracle I didn’t just give up and it was a horrible trap that I fell into. I became an expert at taking online coding courses but I remained a complete novice whenever I tried to implement anything on my own. If I can prevent even one person who is learning to code from falling into the same trap, then the time it took me to type this out is completely worth it to me.
+
+## Build a Foundation First - Grow Fast by Going Slow
+
+Do you ever get that where an obscure idea for a business or an opportunity suddenly comes into your head and you think “Hey, this is a great idea, I’m going to capitalize on it”, only to do a minute of research and find out somebody else is already doing the exact same thing that you just thought of. It’s almost as if any good idea that someone could possibly think of is already being done. None of this is relevant to the topic at hand other than that I used “Grow Fast by Going Slow” in the title of this section. I did a quick search on Google and there is a book with a similar name that appears to convey the same message that I am going to share with you. I’ve actually never read the book, or even heard of it until looking it up just now, so I can’t say much more about it and whether or not it’s worth your time.
+
+The main message is that in order to get where you want to go when it comes to coding, you must first build a strong foundation on which to stand. You won’t be able to build your dream application and you won’t be able to gain the skills to become employable unless you first develop a strong grasp on the fundamentals of programming. There are no exceptions and no shortcuts to this. I’d venture to guess that any professional developer will read this and immediately think it’s an obvious statement that isn’t even worth mentioning. Although, most absolute beginners that don’t have a mentor are left to fend for themselves and don’t have a clear picture on what is required to even become the least bit competent at programming. Instead, they are drowning in the endless amount of information out there and have no idea where to even start or how to develop an effective learning road map.
+
+In my experience, there are two important things to consider when learning new technologies:
+
+1. **Learn any required prerequisites deeply**
+2. **Isolate the concepts as much as possible**
+
+For example, it’s necessary to learn JavaScript before learning a JavaScript framework such as React or Vue. It’s very tempting for beginners to try and “grow fast” and skip right into React and tell themselves that they will eventually fill in their knowledge gaps in core JavaScript at some point later in time. What really ends up happening is that many beginners try and learn these concepts concurrently and only ever end up with a superficial understanding of both. They easily become lost and confused when the training wheels of a tutorial are removed and things start not working right when they try to write code on their own.
+
+Here’s an example of some React code that helps illustrate this:
+
+```js
+const [message, setMessage] = useState(“”);
+```
+
+Which part of the above code is React syntax and which part is JavaScript syntax? If you aren’t familiar with the destructuring assignment syntax, you may be tempted to say that the below is some syntax unique to React.
+
+`[message, setMessage]`
+
+However, it’s simply just JavaScript.
+
+The `useState(“”)` syntax is React specific and everything else is just plain vanilla JavaScript. Having a deep understanding of what is JavaScript and what is framework code is essential and necessary.
+
+Here is another example of React code where the same thing can be expressed in three different ways:
+
+```js
+const PersonComponent = ({name, age}) => {
+	…
+	<p>{name}</p>
+	<p>{age}</p>
+	…
+}
+
+const PersonComponent = (props) => {
+	const {name, age} = props;
+	…
+	<p>{name}</p>
+	<p>{age}</p>
+	…
+}
+
+const PersonComponent = (props) => {
+	…
+	<p>{props.name}</p>
+	<p>{props.age}</p>
+	…
+}
+```
+
+Someone who has taken the time to learn JavaScript will quickly understand the differences in the code and why each of the examples will work. Someone who tries to skip straight to React may become confused when they only learned to write the code in the first way. When they come across code written in the second or third way, they may become completely stuck and not understand what’s going on. Maybe they were under the impression that the code must be written in the first way in order to conform to the React syntax. However, much like the first example with the `[message, setMessage]` syntax, this example can be easily understood if you know about JavaScript’s object destructuring syntax.
+
+**If you are interested in learning a particular technology, make sure to spend adequate time gaining expertise in any underlying or prerequisite technology.** Even if it’s not as exciting, take the time to learn the fundamental skills and you will thank yourself later. Doing this will not only help you become a better developer, you will also get closer to your end goal much faster. Furthermore, you will also be able to pick up new technologies much quicker. If you know JavaScript really well, you’ll be able to quickly learn any JavaScript framework.
+
+Trying to “grow fast” by cutting corners (i.e. going straight into learning React before JavaScript) ends up taking you longer than if you had just taken it step by step, piece by piece, from the very beginning. That’s really the point I am trying to convey when I say “go slow to grow fast.” Learn things slowly and thoroughly, not quickly and superficially.
+
+The second point, which is to learn concepts in isolation whenever possible, is closely related to the first point. I’ve found that **trying to learn too many concepts at once never leads to good results.** Most online instructors pack their courses with so many technologies to attract the largest number of students. “Build a Full Stack ECommerce Store with React, NextJS, Redux, Tailwind, GraphQL, Authentication, ExpressJS!” If you already know all of these technologies, then the course may be a good option for you to see how they are all wired together. However, if you are just starting to learn React, then just learn React. It’s inefficient to add unnecessary overhead by incorporating Redux or GraphQL into the mix. The quickest way to be able to build an ecommerce store (or whatever app you desire to build) with all of the above technologies is to learn each one individually and in isolation.
+
+Well, that’s about all I have for now. Hope this post was useful to somebody and I’m curious to know if anyone has experienced anything similar when learning to code. If so, feel free to connect with me on Twitter ([@thomasswokowski](https://twitter.com/thomasswokowski)) and let me know. Thanks for reading and I’ll see you next time.

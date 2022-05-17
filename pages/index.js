@@ -32,7 +32,7 @@ export default function Home({ posts }) {
           </h2>
         </div>
         <div className="mx-2 my-12 flex w-96 items-center justify-center">
-          <BlogNewsletterForm title="Stay updated, receive the latest post straight to your mailbox" />
+          <BlogNewsletterForm title="Enter your email to stay in touch and receive my latest updates..." />
         </div>
       </div>
       <div className="divide-y divide-gray-200 dark:divide-gray-700">

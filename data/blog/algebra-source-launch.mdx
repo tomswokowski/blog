@@ -1,0 +1,74 @@
+---
+title: Launch of Algebra Source
+date: '2022-06-03'
+tags: ['Side Hustle', 'React', 'NextJS', 'TailwindCSS']
+draft: false
+summary: "I launched a new website (algebrasource.com) to help grow my dad's Algebra course on Udemy. In this article, I talk about some of my quantifiable goals of the project and some of the technologies I used to put it all together."
+layout: PostSimple
+bibliography: references-data.bib
+canonicalUrl: https://tomswokowski.dev/blog/algebra-source-launch/
+---
+
+## Table of Contents
+
+<TOCInline toc={props.toc} exclude="Table of Contents" toHeading={2} />
+
+## The Algebra Course
+
+Over the past two weeks, or more specifically the middle to the end of May 2022, I’ve spent a good amount of hours in the evenings and on weekends setting up some new distribution options for my dad’s Algebra course that he created a few years back.
+
+My dad originally started creating the course, The Ultimate Guide to Understanding Algebra, in the summer of 2017 and finally released it on New Year’s day of 2018. Since then, there have been various enhancements to the course and it now sits at over 21.5 hours long, 323 individual lessons, and over 1,700 practice problems with worked out solutions. It’s truly a complete Algebra course from start to finish.
+
+Since the course was released in 2018, nearly 24,000 students have since subscribed as of the beginning of June 2022. The important caveat here is that roughly 21,000 of these students are only enrolled in the free “Bootcamp” that my dad had created alongside the full course as a way to provide a condensed and simplified preview of the full course.
+
+Although the Bootcamp is highly rated on Udemy and currently sits at 4.8 out of 5.0 stars, it’s very difficult to convert these 21,000 students over to the full course (paid version) due to the restrictions Udemy places when it comes to communicating and marketing to these students. For instance, you can’t send any email communication promoting a paid course to students enrolled in a free course.
+
+Furthermore, Udemy also pays a very pitiful percentage of 37% to the instructor when the student enrolls and doesn’t use an instructor promotion. An instructor promotion is essentially a coupon that the instructor creates and markets out to students. If the student clicks on the URL associated with the coupon and enrolls from there, the instructor gets 97% of the revenue. Basically, in order to make any money on your course, you need to do all of the marketing.
+
+For all of the work that my dad put into creating this course, it’s been a shame that we have done zero marketing or promotion for it. Every enrollment has been organic. What’s encouraging about this is that enrollment numbers are continuing to climb despite the large amount of Algebra courses on the Udemy platform. The course is also extremely in depth and has high ratings and remarks from former students. So, given a little marketing push, I think there is a lot of potential to 10x the monthly revenue while still remaining profitable.
+
+That’s where my work started and here’s a few things I have set up over the last few weeks to accomplish the goal of increasing the revenue of my dad’s Algebra course. I’ll also discuss some specific metrics I’m trying to hit by the end of 2022.
+
+## Created a YouTube Channel
+
+The first thing I did was created a YouTube channel and posted all of the videos in the course for free online. At first glance, that seems very counterintuitive if you want to earn more revenue from course sales but the more I thought about it, the more I was convinced it was the correct path forward. I came to the conclusion that the amount of people who would be exposed to the Swokowski Mathematics brand would increase dramatically. Right now, the only people who are aware of the brand are the one off people who find the course when searching through Udemy courses. YouTube has a tremendous reach and the primary goal is simply to create a bigger audience and drive more brand awareness for 2022.
+
+I’ve organized the videos on YouTube in order and they can be easily viewed using YouTube’s playlist feature. In the description of all 324 videos in the playlist, I’ve two non-intrusive upsell links that I am hoping drive more sales.
+
+The first is a link to the full course with an associated coupon attached. Udemy charges roughly $15 currently for courses and so if students buy through this link, my dad will earn roughly $14 a sale versus the $5 he is currently getting. Additionally, many more students will become exposed to the course this way. I’m excited to report at the end of the year or in a few months how this is turning out. I’ll create a link here when it is ready.
+
+What are the benefits of the course if all videos are made free online? The first is instructor support and direct message. By subscribing to the course, students can directly ask my dad for help when they have questions and he has been supporting students throughout the course since its inception.
+
+The second is the associated practice workbook. The course contains over 1,700 practice problems and answers that correspond to each lecture and are custom made by my dad. That’s a lot of additional content and I’m marketing that workbook as an element that is truly necessary to get the most out of the videos, which is true. You can’t get better at Algebra unless you practice the material you have just learned and just watching the videos is not sufficient. The workbook is included with the subscription on the Udemy.
+
+Alternatively, I’ve made the workbook (with answers) available as a PDF that can be purchased on Gumroad. If you are selling any sort of digital product, I would highly recommend Gumroad as a starting point since it is very easy to get up and running. The link to the workbook is also included in each of the video descriptions on YouTube for students to purchase separately should they desire. I’m not sure how this will turn out, but again I will report on this at the end of the year at the latest.
+
+The last benefit of the course is simply to just show support for my dad and his hard work in creating the course. It’s a similar concept to when people thought Steve Jobs was crazy for offering music for free on the iPod. Steve Jobs bet on the fact that fans would want to support their favorite artists even if they had the option to listen to the music for free. Needless to say, he was correct and I think there are a good amount of people who would show support and subscribe to my dad’s course solely to just show support for him.
+
+## Created AlgebraSource.com
+
+Being a web developer, this was my favorite part of the project. I built the website using NextJS and TailwindCSS and really had a blast doing so. I’m proud of the way it turned out and those technologies are such a joy to work with. The SEO and performance scores rank almost as high as possible and that’s thanks to a lot of the built in features of NextJS. It’s a great framework and I’m definitely going to be building a lot more projects with this framework in the future. Deploying the site on Vercel is also a breeze and takes only minutes to get up and running.
+
+There’s two primary 3rd party integrations that I incorporated into the website. The first is Google Analytics and its purpose is pretty straightforward. I want to track who is visiting the site and other important metrics. Nothing really special here as of now, but I feel it’s important to have metrics that can be tracked. As time goes on, I’ll add some configuration to this and customize this integration some but I at least have enough to get me started. I’ll report on the website traffic numbers in a future article.
+
+The second 3rd party integration I incorporated on AlgebraSource is Mailchimp. I included this because I want to get more email subscribers. There’s many proven benefits to having an owned audience (email list) versus a rented audience (social network followers) and I wanted to get the ball rolling on this. The thing I am offering in exchange for a user’s email is I am sending them the worksheet portion (without the answers) of the PDF that I am selling on gumroad. When user’s receive their free download of the worksheet PDF, obviously I have the upsells in there for the answer book as well as the full course on Udemy where I highlight the benefits listed above in the email. Again, this is something I will report back on in the future.
+
+Another thing to note about Algebra Source is the searchable lessons page (https://algebrasource.com/lessons). I was very pleased with how this turned out and it is blazing fast and very responsive to user input. Furthermore, I’m very pleased with the performance on the individual lesson pages and how users can almost instantaneously navigate between lessons without reloading the page. This is all thanks to the SSR offered out of the box by NextJS. Give it a try and see how fast it is for yourself.
+
+One last thing to mention is that the individual lesson pages contain embedded YouTube videos. I decided to go this route instead of storing the videos separately in a cloud provider such as AWS, because if you embed YouTube videos you get the additional benefit of actually getting a view on YouTube as well. More views on YouTube means that your videos will eventually reach a larger audience which is one of the primary goals for this project in the remaining months of 2022.
+
+## 2022 Goals for AlgebraSource
+
+“What gets measured, gets done.” That’s one of my favorite sayings and it’s why I think it’s so important to have quantifiable goals that passed or failed. Here’s what I want to achieve by the end of 2022:
+
+YouTube Subscribers: As of this writing on 06/03/2022, we have 23 subscribers. I want to increase this to 7,000 by the end of the year. That is gaining about 1,000 subscribers a month.
+
+YouTube Views: As of this writing, we have about 500 views on YouTube. I wanted to increase this to 200,000 by the end of the year.
+
+Udemy Sales: As of this writing, we have 2,866 in the paid Algebra course. I want to increase this to 5,000 by the end of the year.
+
+The mailchimp subscriber numbers and sales of the Algebra workbook on Gumroad are more experiments at this point. I’m not too concerned if they don’t gain traction right now so I don’t have any specific numbers in mind for what I want to achieve with either of these at this point. The website traffic is much more important to me but is also not something I am able to quantify at this time. Although, I would like to see a steady increase in the amount of traffic and I want to start ranking organically in Google Search for some Algebra related keywords by the end of the year.
+
+To recap, my two primary goals are to hit the YouTube numbers I have stated above and start getting consistent traffic to algebrasource.com through solid web development and marketing practices. I think the revenue will work itself out and I’m ultimately predicting that the main source of revenue will not be Udemy sales and will eventually come from YouTube ads. However, YouTube advertising is more in the parking lot at this time and will be a discussion better suited for 2023. I still want to focus on achieving more Udemy sales as there is substantial potential there, especially when using instructor promotions (coupon links).
+
+Well, that’s enough talk for now and it’s time to get work. Thanks for reading and I’m looking forward to following up on the results. If you want to get more real time results, connect with me on Twitter (link in footer) as I plan to give some updates along the way.

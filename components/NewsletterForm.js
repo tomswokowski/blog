@@ -6,10 +6,12 @@ const NewsletterForm = ({ title = 'Subscribe to the newsletter' }) => {
   const inputEl = useRef(null)
   const [error, setError] = useState(false)
   const [message, setMessage] = useState('')
+  const [loading, setLoading] = useState(false)
   const [subscribed, setSubscribed] = useState(false)
 
   const subscribe = async (e) => {
     e.preventDefault()
+    setLoading(true)
 
     const res = await fetch(`/api/${siteMetadata.newsletter.provider}`, {
       body: JSON.stringify({
@@ -24,12 +26,14 @@ const NewsletterForm = ({ title = 'Subscribe to the newsletter' }) => {
     const { error } = await res.json()
     if (error) {
       setError(true)
+      setLoading(false)
       setMessage(error)
       return
     }
 
     inputEl.current.value = ''
     setError(false)
+    setLoading(false)
     setSubscribed(true)
     setMessage('Successfully! 🎉 You are now subscribed.')
   }
@@ -64,7 +68,7 @@ const NewsletterForm = ({ title = 'Subscribe to the newsletter' }) => {
             type="submit"
             disabled={subscribed}
           >
-            {subscribed ? 'Thank you!' : 'Sign up'}
+            {loading ? 'Loading...' : subscribed ? 'Thank you!' : 'Sign Up'}
           </button>
         </div>
       </form>

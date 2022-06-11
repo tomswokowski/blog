@@ -1,0 +1,480 @@
+---
+title: An Overview of the Event Bus Pattern in Vue
+date: '2022-06-11'
+tags: ['Vue', 'programming']
+draft: false
+summary: 'In this post, I talk about the Event Bus pattern in Vue and what problem it tries to solve. Also, I talk about a simple way to migrate your EventBus code from Vue2 to Vue3.'
+layout: PostSimple
+bibliography: references-data.bib
+canonicalUrl: https://tomswokowski.dev/blog/an-overview-of-the-event-bus-pattern-in-vue/
+---
+
+## Table of Contents
+
+<TOCInline toc={props.toc} exclude="Table of Contents" toHeading={2} />
+
+## Introduction
+
+This post covers some ways that sibling components can communicate in Vue2. We’ll cover the “bad” way first and the “better” way second. The “better” way is essentially going away in Vue3, so at the end of the post we’ll talk about what you can do right now in your Vue2 app to best prepare for an eventual migration to Vue3.
+
+## App Hierarchy
+
+Below is what our app hierarchy looks like for this example. We have a top level App.vue component which has two child components: ComponentOne.vue and ComponentTwo.vue. ComponentOne and ComponentTwo are sibling components to each other because they are on the same level of the hierarchy. These components both have multiple child components themselves. Finally, ChildA.vue, ChildB.vue, ChildC.vue, and ChildD.vue are called grandchildren of App.vue.
+
+![EventBus1](/static/images/an_overview_of_the_event_bus_pattern_in_vue/EventBus1.png)
+
+## Our Goal
+
+We want to communicate from ComponentOne to ComponentTwo. More specifically, ComponentOne will contain a button and ComponentTwo will be responsible for displaying how many times this button has been clicked. Every time the button in ComponentOne is clicked, we want to dynamically update the count and display this to the user.
+
+## Some Real World Context
+
+In practice, a situation like this could come up in an e-commerce application. For example, say ComponentOne is a Product with an “add to cart” button. ComponentTwo could be a Shopping Cart that keeps track of the total number of items in the cart. These components would generally live at or near the same level in the overall hierarchy of the application. At the very least, it wouldn’t make sense for a Product and ShoppingCart component to have a natural parent-child relationship.
+
+## Our first attempt (the “bad” way)
+
+Just by looking at the app heirarchy, we can easily see that ComponentOne.vue and ComponentTwo.vue are sort of linked through App.vue. So, let’s start there and try to pass the communication from ComponentOne to ComponentTwo through App.vue.
+
+![EventBus2](/static/images/an_overview_of_the_event_bus_pattern_in_vue/EventBus2.png)
+
+### Step 1: Passing Signal (Event) from ComponentOne.vue to App.vue
+
+Our first step is to let App.vue know when the button has been pressed in ComponentOne. The way we do this in Vue is through the built in `$emit` method.
+
+```js:ComponentOne.vue
+<template>
+ <button @click="$emit('increase-count')">Click</button>
+</template>
+
+<script>
+export default {
+ name: 'ComponentOne',
+};
+</script>
+```
+
+```js:App.vue
+<template>
+ <div id="app">
+   <component-one @increase-count="onIncreaseCount" />
+   <component-two />
+ </div>
+</template>
+
+<script>
+import ComponentOne from './components/ComponentOne.vue';
+import ComponentTwo from './components/ComponentTwo.vue';
+
+export default {
+ name: 'App',
+ components: {
+   ComponentOne,
+   ComponentTwo,
+ },
+ methods: {
+   onIncreaseCount() {
+     alert('button clicked!');
+   },
+ },
+};
+</script>
+```
+
+With this code now implemented, we can pass information or communicate up to the parent App.vue component from ComponentOne. Let me clarify one thing quickly. I’ve titled this section the “bad” way, but there is nothing inherently wrong with this particular code so far. In fact, there are very valid use cases for using the `$emit` method when there should be true communication from a child to a parent.
+
+An example of this is to consider a modal component. A modal would likely be a child of some larger component. It’s likely we would want to communicate to the parent component when the user presses the “close” icon in our hypothetical modal component. The easiest (and only logical?) way to do this is by using the `$emit` syntax we have implemented above. So, it’s useful when there is a true need for a child to communicate with its parent. We’ll talk about the issue with this approach in our situation shortly, but first let’s keep going and finish coding this out.
+
+### Step 2: Implement function to update count in App.vue and keep track of count
+
+We have the communication from ComponentOne up to App.vue in place. Now what? Well, as we said earlier, we need to keep track of the number of times the button was clicked so let’s keep track of that information right in App.vue.
+
+Since we’re using the Options API, we can easily declare some reactive state using the data option like so and adding a “count” property:
+
+```js:App.vue
+ data() {
+   return {
+     count: 0,
+   };
+ },
+```
+
+Let’s update our onIncreaseCount function so that the count increases on each click:
+
+```js:App.vue
+onIncreaseCount() {
+    this.count++;
+},
+```
+
+Lastly, for now let’s just print this to the screen:
+
+```js:App.vue
+<template>
+ <div id="app">
+   <p>{{ count }}</p>
+   <component-one @increase-count="onIncreaseCount" />
+   <component-two />
+ </div>
+</template>
+```
+
+Put this altogether and now the whole file for App.vue now looks like this:
+
+```js:App.vue
+<template>
+ <div id="app">
+   <p>{{ count }}</p>
+   <component-one @increase-count="onIncreaseCount" />
+   <component-two />
+ </div>
+</template>
+
+<script>
+import ComponentOne from './components/ComponentOne.vue';
+import ComponentTwo from './components/ComponentTwo.vue';
+
+export default {
+ name: 'App',
+ components: {
+   ComponentOne,
+   ComponentTwo,
+ },
+ data() {
+   return {
+     count: 0,
+   };
+ },
+ methods: {
+   onIncreaseCount() {
+     this.count++;
+   },
+ },
+};
+</script>
+```
+
+And everything works well so far. Each time we click the button, the count now increases by one.
+
+![EventBus3](/static/images/an_overview_of_the_event_bus_pattern_in_vue/EventBus3.png)
+
+### Step 3: Pass the Count to ComponentTwo via Props
+
+Next, our job is to pass the “count” from App.vue down to ComponentTwo. In Step 1 above, we learned that the way we pass information from a child to a parent is via the built in `$emit` method. The way we pass information down from a parent to a child is via props.
+
+Let’s start by building out ComponentTwo, which will accept one prop called “count” and be of type Number. The final implementation of the component looks like this:
+
+```js:ComponentTwo.vue
+<template>
+ <p>{{ count }}</p>
+</template>
+
+<script>
+export default {
+ name: 'ComponentTwo',
+ props: {
+   count: Number,
+ },
+};
+</script>
+```
+
+Now, let’s refactor our App.vue component to actually pass this down to ComponentTwo.
+
+We can start by getting rid of this line as it was just used for testing purposes:
+
+```js:App.vue
+<p>{{ count }}</p>
+```
+
+And then updating component-two in App.vue as follows:
+
+```js:App.vue
+<component-two :count="count" />
+```
+
+Altogether, the updated App.vue looks as follows:
+
+```js:App.vue
+<template>
+ <div id="app">
+   <component-one @increase-count="onIncreaseCount" />
+   <component-two :count="count" />
+ </div>
+</template>
+
+<script>
+import ComponentOne from './components/ComponentOne.vue';
+import ComponentTwo from './components/ComponentTwo.vue';
+
+export default {
+ name: 'App',
+ components: {
+   ComponentOne,
+   ComponentTwo,
+ },
+ data() {
+   return {
+     count: 0,
+   };
+ },
+ methods: {
+   onIncreaseCount() {
+     this.count++;
+   },
+ },
+};
+</script>
+```
+
+So, it’s a success. We’ve communicated the button click from ComponentOne over to ComponentTwo and are successfully able to keep track of the total number of times the button was clicked. Maybe we can pretend that ComponentTwo is a little shopping cart icon and each time the button is pressed in ComponentOne, the “total items in cart” label is updated with our “count” property.
+
+## What’s the problem with this approach?
+
+We’ve just accomplished our goal stated above, so why not just call it a day and be done with it and move on to the next task? Well, let’s think for a second and recall our app hierarchy from before.
+![EventBus2](/static/images/an_overview_of_the_event_bus_pattern_in_vue/EventBus2.png)
+
+The glaring issue is that the state of the “count” property is stored and managed in App.vue. The reason this is a problem in our example is because App.vue has no use for “count” at all. It shouldn’t care about it nor be concerned with it at all. It’s only job is to pass the count down to ComponentTwo via the props as we’ve just seen.
+
+Implementing the code the way we currently have it only makes sense if App.vue has some utility for the count property itself. Or if ComponentOne has a bunch of different siblings who all want to make use of this count property. Then maybe it would make sense to lift the state up to the parent App.vue component and manage the state of count there. However, in our case, it would be much better if the state of the count property was stored and managed in ComponentTwo. This would make our components much more decoupled from each other which is something we should always try and do. So, let’s refactor this code and remove App.vue from the equation completely.
+
+## The “Better” Way: Using the Event Bus (Publish and Subscribe Pattern)
+
+The communication will now be more direct and simplified and will look like this from a high level:
+
+![EventBus4](/static/images/an_overview_of_the_event_bus_pattern_in_vue/EventBus4.png)
+
+The way we achieve this in Vue2 is through the Event Bus which follows the publish and subscribe pattern. In other words, ComponentTwo is going to “subscribe” and create a global listener for our click event described earlier and ComponentOne is going to “publish” the event whenever the user clicks on the button.
+
+So, how do we set this up in code?
+
+### Step 1: Removing code related to “count” in App.vue
+
+Let’s first remove everything related to the “count” property in App.vue. Here’s our simplified App.vue component. We are essentially removing App.vue as the middleman between ComponentOne and ComponentTwo.
+
+```js:App.vue
+<template>
+ <div id="app">
+   <component-one />
+   <component-two />
+ </div>
+</template>
+
+<script>
+import ComponentOne from './components/ComponentOne.vue';
+import ComponentTwo from './components/ComponentTwo.vue';
+
+export default {
+ name: 'App',
+ components: {
+   ComponentOne,
+   ComponentTwo,
+ },
+};
+</script>
+```
+
+Now let’s create our Event Bus file (eventBus.js) in the src folder. And add the following contents:
+
+```js:eventBus.js
+import Vue from 'vue';
+export const EventBus = new Vue();
+```
+
+What we are doing here in this file is creating a special Vue instance that will allow us to communicate or pass data from one component to another, regardless of where they are located in the overall component hierarchy of the app. We assign this instance to the constant named EventBus. This Vue instance is decoupled from the DOM and the rest of our App. It’s only job in our case is to manage communication between components.
+
+### Step 2: Add “count” state and subscribe to click event in ComponentTwo
+
+First, let’s move the reactive state we previously had in App.vue down to ComponentTwo because that is where we would like to keep and manage the count property:
+
+```js:ComponentTwo.vue
+ data() {
+   return {
+     count: 0,
+   };
+ },
+```
+
+Next, let’s “subscribe” or listen for the “buttonClicked” event. “buttonClicked” is just a name that I specified for this event. We can call this whatever we like and when you have multiple events that you want to define using this pattern, it’s important to be as descriptive as possible as to what the purpose of the event is.
+
+We create our subscription to the event in the created lifecycle method in Vue and register the simple callback function that increments the count property.
+
+```js:ComponentTwo.vue
+ created() {
+   EventBus.$on('buttonClicked', () => {
+     this.count++;
+   });
+ },
+```
+
+Lastly, it’s good practice to remove this listeners when the component gets destroyed or removed from the DOM, so we will do this in the beforeDestroy lifecycle method as follows:
+
+```js:ComponentTwo.vue
+ beforeDestroy() {
+   EventBus.$off('buttonClicked');
+ },
+```
+
+Altogether, ComponentTwo.vue now looks like this:
+
+```js:ComponentTwo.vue
+<template>
+ <p>{{ count }}</p>
+</template>
+
+<script>
+import { EventBus } from '../eventBus';
+
+export default {
+ name: 'ComponentTwo',
+ data() {
+   return {
+     count: 0,
+   };
+ },
+ created() {
+   EventBus.$on('buttonClicked', () => {
+     this.count++;
+   });
+ },
+ beforeDestroy() {
+   EventBus.$off('buttonClicked');
+ },
+};
+</script>
+```
+
+### Step 3: Emit the event from ComponentOne
+
+In Step 2, we subscribed to the “buttonClicked” (again, user specified name) event and implemented the functionality (increment count), but now we need to emit the event from ComponentOne.
+
+Fortunately, this is easy to do as well and we just need to make a few tweaks to the click directive on the button in our template and just emit the event from our function as follows:
+
+```js:ComponentOne.vue
+<template>
+ <button @click="emitClickEvent">Click</button>
+</template>
+
+<script>
+import { EventBus } from '../eventBus';
+
+export default {
+ name: 'ComponentOne',
+ methods: {
+   emitClickEvent() {
+     EventBus.$emit('buttonClicked');
+   },
+ },
+};
+</script>
+```
+
+That’s actually all there is to it. We’ve successfully implemented the EventBus and are now communicating directly between ComponentOne and ComponentTwo. Again, this allows for much better decoupling of the components and we don’t need to keep unnecessary and state in a parent component such as App.vue. Making this a habit and tightly coupling the components will only make the code more confusing and make refactoring much more challenging down the road.
+
+Now any component, regardless of where it is in the hierarchy, that needs to know when the button has been clicked can simply subscribe and listen for the event in the same way we implemented for ComponentTwo. That’s not to say that it would make sense in our particular example. If multiple components needed to be aware of the count state, then actually our first approach may be better by keeping it in the parent App.vue component. Or maybe it would be better to keep count in a state management pattern/library such as VueX. I guess it really all comes down to where the state of count should be kept. In our situation, since the value of count is only needed in ComponentTwo, I think it makes sense in Vue2 to implement in the way we have just done with the EventBus.
+
+## Our implementation breaks in Vue3
+
+Unfortunately, if we upgrade our current Vue2 project to Vue3, then our current code will break. The reason for this is because Vue3 is getting rid of the `$on` and `$off` methods (as well as `$once` which we didn’t cover) that we used for the Event Bus pattern. Recall that we used these methods in ComponentTwo when we subscribed to the “buttonClicked” event.
+
+```js:ComponentTwo.vue
+ created() {
+   EventBus.$on('buttonClicked', () => {
+     this.count++;
+   });
+ },
+ beforeDestroy() {
+   EventBus.$off('buttonClicked');
+ },
+```
+
+Even if we aren’t upgrading from Vue2 to Vue3 immediately, preparing for this is still something we should consider so that it isn’t such a pain to refactor when the time finally comes to upgrade.
+
+## The Vue3 Solution
+
+If we wanted to start preparing for an eventual migration from Vue2 to Vue3 and wanted to keep our Event Bus pattern intact, it’s recommended by the community that we use a small 3rd party library such as Tiny Emitter to replace the `$on`, `$off` and `$once` methods that are removed in Vue3. So, let’s try that. The whole process is actually very simple. First let’s install it in our project:
+
+`npm install tiny-emitter --save`
+
+### Step 1: Update the eventBus.js file
+
+Recall our current implementation of this file:
+
+```js:eventBus.js
+import Vue from 'vue';
+export const EventBus = new Vue();
+```
+
+The only thing we need to do in this file to update the file as follows:
+
+```js:eventBus.js
+const Emitter = require('tiny-emitter');
+export const EventBus = new Emitter();
+```
+
+Instead of creating a new native Vue instance, we are now using the tiny-emitter 3rd party API. This library sort of polyfills the `$on`, `$off` and `$once` methods that are removed in Vue3. If you notice, we even keep the EventBus name so code changes are kept to a minimum.
+
+### Step 2: Update ComponentTwo with tiny-emitter methods
+
+The tiny-emitter library makes this replacement very natural and easy. Previously, we used the native `$on` and `$off` methods to listen for and turn off events. Now, we simply just remove the `$` and we get the same functionality as before, only now we are using the methods provided by the tiny-emitter library. Our ComponentTwo code is now as follows (the only difference is that the $ signs have been removed):
+
+```js:ComponentTwo.vue
+<template>
+ <p>{{ count }}</p>
+</template>
+
+<script>
+import { EventBus } from '../eventBus';
+
+export default {
+ name: 'ComponentTwo',
+ data() {
+   return {
+     count: 0,
+   };
+ },
+ created() {
+   EventBus.on('buttonClicked', () => {
+     this.count++;
+   });
+ },
+ beforeDestroy() {
+   EventBus.off('buttonClicked');
+ },
+};
+</script>
+```
+
+### Step 3: Update ComponentOne with tiny-emitter method
+
+Now that we are using tiny-emitter, we need to update the `$emit` method that is currently in our code to use the method implemented by tiny-emitter, which is simply “emit”. Our ComponentOne code becomes the following (again, the only difference is that the `$` sign has been removed):
+
+```js:ComponentOne.vue
+<template>
+ <button @click="emitClickEvent">Click</button>
+</template>
+
+<script>
+import { EventBus } from '../eventBus';
+
+export default {
+ name: 'ComponentOne',
+ methods: {
+   emitClickEvent() {
+     EventBus.emit('buttonClicked');
+   },
+ },
+};
+</script>
+```
+
+If we run this now, we notice that everything works just the same as before. This is great because now we can safely upgrade our app from Vue2 to Vue3 without any breakage (in this regard anyway).
+
+The good thing about tiny-emitter is that it’s just that, tiny. The description of the library on the npm registry is “A tiny (less than 1k) event emitter library”, so there’s absolutely no need to worry about any negative performance impacts of using this library.
+
+## Conclusion
+
+So, there we have it. To recap, we now understand why we shouldn’t couple components if we don’t have to. We learned about the Event Bus pattern and why it can be a useful solution in certain situations. We also learned that in Vue3 we can’t use the native methods `$on` and `$off` typically used to implement the EventBus pattern, so we used a small third party library called tiny-emitter to correct this.
+
+The one closing thought is that there are other, possibly better, ways to achieve our original goal in Vue3 had we started from scratch using Vue3. Maybe we’ll explore that another day in a separate post. The refactoring approach used in this post is primarily taken from the perspective of a developer who had an existing app written in Vue2 and was looking for a quick and easy solution to avoid any breakage when migrating to Vue3.
+
+Thanks for reading and see you in the next one.

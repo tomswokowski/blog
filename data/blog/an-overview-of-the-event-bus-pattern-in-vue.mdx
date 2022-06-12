@@ -37,7 +37,7 @@ Just by looking at the app heirarchy, we can easily see that `ComponentOne.vue` 
 
 ![EventBus2](/static/images/an_overview_of_the_event_bus_pattern_in_vue/EventBus2.png)
 
-### Step 1: Passing Signal (Event) from ComponentOne.vue to App.vue
+### Step 1: Notifying App.vue of Event from ComponentOne
 
 Our first step is to let `App.vue` know when the button has been pressed in `ComponentOne`. The way we do this in Vue is through the built in `$emit` method.
 

@@ -13,6 +13,52 @@ canonicalUrl: https://tomswokowski.dev/blog/attempting-to-understand-shopify-mer
 
 <TOCInline toc={props.toc} exclude="Table of Contents" toHeading={2} />
 
-## Why?
+## Why do I care about Shopify Merchant pain points?
 
-Writing in progress...
+Well, to be 100% honest and transparent, I don’t really. However, Shopify is a great platform to build apps for and many individual developers make their living off income generated from apps they have developed and released to the Shopify App store. I think it’s a great way for a developer to get their start in entrepreneurship and Software as a Service (SaaS) based businesses.
+
+The thought of being able to make a small useful utility for merchants where I could earn some side income was appealing to me, so I began my quest to understand what they were currently struggling with to see if I could come up with any ideas for an app. After doing a bit of digging and research about Shopify merchants, I thought a good place to get app ideas was to read the reviews on the Shopify App store and see if I could spot any unmet needs.
+
+In order to be more efficient with this project, I decided to just scrape every customer review on the app store and go from there. The code only took me about a half of a day to slap together and much longer for the script to complete (we’ll discuss shortly), but ultimately I was able to get what I wanted. I had successfully scraped all 650,000 plus reviews from the 7,000 plus apps currently on the app store and saved them to a database where I could then query and export them to an Excel file for further processing and analysis.
+
+## The tech used in the project
+
+Aside from actually wanting to look at this data to see if I could come up with a money making app idea, I really wanted to get my feet wet with some backend development as I feel that is currently a weak spot in my current skill set.
+
+I built the project using Java and the Spring Boot framework. The heavy lifting of the actual scraping was done with the assistance of the jsoup library. Writing a web scraper is actually great fun, but you need some knowledge about HTML and CSS to be good at it.
+
+I also stored the relevant fields in an AWS RDS PostgreSQL database. The data was broken into three models which were:
+
+1. Category: a small list of categories that apps can fall under. I just grabbed the category name and category url here.
+
+2. ShopifyApp: I just collected some basic information about the app such as the name, description, developer, app URL, and category
+
+3. Review: Each ShopifyApp had a list of reviews so I collected the reviewer (company), rating (out of 5 stars), review date, description, and the associated app.
+
+These tables had foreign keys connecting each other so I could perform various queries to analyze the data. It was relatively easy to whip this tool together and you can check out the full code on github here: https://github.com/tomswokowski/shopify-app-review-scraper/
+
+The code was written in such a way that it was reusable in a sense that there were checks in place to only add the review to the database if it didn’t already exist. The program views the reviews by “most recent” and moves onto the next App if all Reviews for the current app are already in the database. It sounds like an obvious feature, but it wasn’t something I had initially planned to do and I decided to incorporate this in case I wanted to run this script at more regular intervals using some automated scheduling tool such as cron.
+
+## How the App Works from a High Level
+
+First, I collect all of the possible category URLs on the Shopify App Store home page and store this in an array.
+
+I then visit each URL in the category array which gives me another list of Shopify Apps. I collect these Shopify App URLs and add them to an array. What I end up with is a big list of Shopify App URLs from all of the different categories.
+
+Lastly, I visit each Shopify App URL in the array and am once again given a list of reviews for each app. I collect the necessary data points I’ve mentioned above and send these to my database (along with the information about the categories and apps as well).
+
+In order to collect all 650,000 plus reviews using this method, the script took almost 8 hours to run. The primary reason for it taking so long is because Shopify frequently sent me an HTTP 403 (requested resource is forbidden) code because I was accessing so many URLs in rapid succession. I had to write some code to slow down my script and retry the request if I received this error after roughly a minute. Then after another 250 requests or so, the process would repeat and my IP address would get temporarily blocked again. Thankfully for me, the block only lasted a minute and I was able to eventually get all of the data I wanted.
+
+Although, I’ve been busy with my day job and some other side projects so that’s really where the story ends for now. I’m also happily employed as a developer at an e-commerce retail company, so I’ve decided I don’t even want to create any tools that would benefit other competing companies at this time. It’s just not worth it to me for now and isn’t a priority to take this project much further at the moment. I do have the data all set and ready to be reviewed, so maybe on a rainy day when I’m bored I’ll run some SQL queries and see if I can identify any profitable opportunities.
+
+## An Unethical Way to Improve App Performance
+
+Before closing this post out, I wanted to briefly discuss one way I could drastically improve the roughly 8 hour running time of my current implementation of the program. However, I’d deem this strategy as unethical as it would be a way around the 403 (forbidden) request Shopify kept sending me. The 403 request is basically saying, “hey you are sending too many requests, please slow down.” This approach I am going to share would basically be giving them the middle finger here.
+
+If I needed to improve performance and I was willing to set the ethical dilemma aside, here's the change I would make to the program. So, I would run the app as normal and collect all 7,000 plus shopify app URLs into the array just as before. I noticed that I wasn’t getting an HTTP 403 code until about after 10,000 requests, which was when I was scraping the actual review data. The 403 codes came much more frequently after that.
+
+What if I used the array of Shopify App URLs as a queue like this and each time I ran into a 403 HTTP request, I would put the current worker node to sleep temporarily (maybe an EC2 instance), but then automatically provision another worker node with a different IP address to start pulling from the queue! Then this node can do the same thing and once it receives the inevitable 403 status code, it also creates a new worker node. Basically, we could create a bunch of isolated worker nodes that each have an independent IP address and this would allow a much faster processing of the Shopify App URL queue.
+
+![ShopifyScraper1](/static/images/shopify_app_scraper/ShopifyScraper1.png)
+
+Anyway, I hope you enjoyed this one. I’ll see you in the next one.

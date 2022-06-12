@@ -249,7 +249,7 @@ So, how do we set this up in code?
 
 ### Step 1: Removing code related to “count” in App.vue
 
-Let’s first remove everything related to the “count” property in App.vue. Here’s our simplified App.vue component. We are essentially removing `App.vue` as the middleman between `ComponentOne` and `ComponentTwo`.
+Let’s first remove everything related to the “count” property in `App.vue`. Here’s our simplified `App.vue` component. We are essentially removing `App.vue` as the middleman between `ComponentOne` and `ComponentTwo`.
 
 ```js:App.vue
 <template>
@@ -306,7 +306,7 @@ We create our subscription to the event in the `created` lifecycle method in Vue
  },
 ```
 
-Lastly, it’s good practice to remove this listeners when the component gets destroyed or removed from the DOM, so we will do this in the `beforeDestroy` lifecycle method as follows:
+Lastly, it’s good practice to remove the listeners when the component gets destroyed or removed from the DOM, so we will do this in the `beforeDestroy` lifecycle method as follows:
 
 ```js:ComponentTwo.vue
  beforeDestroy() {
@@ -368,9 +368,9 @@ export default {
 </script>
 ```
 
-That’s actually all there is to it. We’ve successfully implemented the EventBus and are now communicating directly between `ComponentOne` and `ComponentTwo`. Again, this allows for much better decoupling of the components and we don’t need to keep unnecessary and state in a parent component such as `App.vue`. Making this a habit and tightly coupling the components will only make the code more confusing and make refactoring much more challenging down the road.
+That’s actually all there is to it. We’ve successfully implemented the EventBus and are now communicating directly between `ComponentOne` and `ComponentTwo`. Again, this allows for much better decoupling of the components and we don’t need to keep unnecessary state in a parent component such as `App.vue`. Making this a habit and tightly coupling the components will only make the code more confusing and make refactoring much more challenging down the road.
 
-Now any component, regardless of where it is in the hierarchy, that needs to know when the button has been clicked can simply subscribe and listen for the event in the same way we implemented for `ComponentTwo`. That’s not to say that it would make sense in our particular example. If multiple components needed to be aware of the count state, then actually our first approach may be better by keeping it in the parent `App.vue` component. Or maybe it would be better to keep count in a state management pattern/library such as VueX. I guess it really all comes down to where the state of count should be kept. In our situation, since the value of count is only needed in `ComponentTwo`, I think it makes sense in Vue2 to implement in the way we have just done with the EventBus.
+Now any component, regardless of where it is in the hierarchy, that needs to know when the button has been clicked can simply subscribe and listen for the event in the same way we implemented for `ComponentTwo`. That’s not to say that it would make sense in our particular example. If multiple components needed to be aware of the count state, then actually our first approach may be better by keeping it in the parent `App.vue` component. Or maybe it would be better to keep count in a state management pattern/library such as VueX. I guess it really all comes down to where the state of count should be kept. In our situation, since the value of count is only needed in `ComponentTwo`, I think it makes sense in Vue2 to implement it in the way we have just done with the EventBus.
 
 ## Our implementation breaks in Vue3
 
@@ -404,14 +404,14 @@ import Vue from 'vue';
 export const EventBus = new Vue();
 ```
 
-The only thing we need to do in this file to update the file as follows:
+The only thing we need to do in this file is to update it as follows:
 
 ```js:eventBus.js
 const Emitter = require('tiny-emitter');
 export const EventBus = new Emitter();
 ```
 
-Instead of creating a new native Vue instance, we are now using the tiny-emitter 3rd party API. This library sort of polyfills the `$on`, `$off` and `$once` methods that are removed in Vue3. If you notice, we even keep the EventBus name so code changes are kept to a minimum.
+Instead of creating a new native Vue instance, we are now using the tiny-emitter 3rd party API. This library replaces the `$on`, `$off` and `$once` methods that are removed in Vue3. If you notice, we even keep the EventBus name so code changes are kept to a minimum.
 
 ### Step 2: Update ComponentTwo with tiny-emitter methods
 
@@ -446,7 +446,7 @@ export default {
 
 ### Step 3: Update ComponentOne with tiny-emitter method
 
-Now that we are using tiny-emitter, we need to update the `$emit` method that is currently in our code to use the method implemented by tiny-emitter, which is simply “emit”. Our `ComponentOne` code becomes the following (again, the only difference is that the `$` sign has been removed):
+Now that we are using tiny-emitter, we need to update the `$emit` method that is currently in our code to use the method implemented by tiny-emitter, which is simply `emit()`. Our `ComponentOne` code becomes the following (again, the only difference is that the `$` sign has been removed):
 
 ```js:ComponentOne.vue
 <template>
@@ -467,9 +467,9 @@ export default {
 </script>
 ```
 
-If we run this now, we notice that everything works just the same as before. This is great because now we can safely upgrade our app from Vue2 to Vue3 without any breakage (in this regard anyway).
+If we run this now, we notice that everything works just the same as before. This is great because now we can safely upgrade our app from Vue2 to Vue3 without any breakage (as far as our Event Bus is concerned anyway).
 
-The good thing about tiny-emitter is that it’s just that, tiny. The description of the library on the npm registry is “A tiny (less than 1k) event emitter library”, so there’s absolutely no need to worry about any negative performance impacts of using this library.
+The good thing about tiny-emitter is that it’s just that, tiny. The description of the library on the npm registry is “A tiny (less than 1k) event emitter library,” so there’s absolutely no need to worry about any negative performance impacts of using this library.
 
 ## Conclusion
 

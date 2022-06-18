@@ -96,13 +96,13 @@ export default App;
 First, we declare some state userInput in our ‘model’ (component) and link this to the ‘view’ (HTML template) via this line:
 
 ```js
-<input value={userInput} />
+<input ... value={userInput} ... />
 ```
 
 Then, each time a user types a character into the input field, the ‘onChange’ event fires which we will handle in the handleChange method we defined:
 
 ```js
-<input onChange={handleChange} />
+<input ... onChange={handleChange} />
 ```
 
 Our handleChange method is implemented as follows:

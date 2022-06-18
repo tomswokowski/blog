@@ -1,0 +1,233 @@
+---
+title: React vs. Vue- Two Way Data Binding
+date: '2022-06-19'
+tags: ['Vue', 'React']
+draft: false
+summary: 'In this post, we take a look at two-way data binding and understand some basic situations where you would need to use it in your application. We then implement a simple program that uses two-way data binding in both React and Vue and compare the differences between the two frameworks.'
+layout: PostSimple
+bibliography: references-data.bib
+canonicalUrl: https://tomswokowski.dev/blog/two-way-data-binding-in-react-and-vue/
+---
+
+## Table of Contents
+
+<TOCInline toc={props.toc} exclude="Table of Contents" toHeading={2} />
+
+## Introduction
+
+Lately, I’ve been spending a lot of time learning more about Vue and React. One of the most effective strategies I have found while doing so is to learn the frameworks concurrently and to study how a particular thing is implemented in both frameworks in close succession. Today, let’s have a look at how two-way data binding is implemented in Vue and React.
+
+## What is two-way data binding?
+
+Two way data binding is the sharing of data between a view and a model.
+
+**View**: think of a view as an HTML file. In our case below, the HTML file only contains a single input field.
+
+**Model**: think of a model as just some JavaScript file. We want to keep track of whatever value is present in this field.
+
+![two_way_data1](/static/images/two_way_data_binding_in_react_and_vue/two_way_data1.png)
+
+Why would we want to do this? Well, there’s really a number of reasons but I’ll give a very common example of a situation where two-way data binding is necessary.
+
+Let’s say we want to implement an email subscribe form on our website. We would first add a form component with an input field much like we have pictured above. When the user enters their email and clicks the submit button, we need a way to capture the value in this field in our JavaScript file so that we can take the input, pass it to a function in our model that validates the input and then finally passes it to another function that sends the value (email address) on to our server (or third party email service) should the input pass our validation.
+
+From just a high level, the flow kind of looks like this so far:
+
+![two_way_data2](/static/images/two_way_data_binding_in_react_and_vue/two_way_data2.png)
+
+You might be wondering and thinking to yourself that this kind of looks like a one-way data flow from the view to the model and so far that is absolutely correct. However, let’s now make one addition to this in order to demonstrate a situation of where we would pass ‘myInput’ back up to the view (HTML).
+
+Let’s say that after a successful subscription to our email list, we simply want to clear the input field for the user. Let’s add one more JavaScript method to change the value of ‘myInput’ back to an empty string.
+
+![two_way_data3](/static/images/two_way_data_binding_in_react_and_vue/two_way_data3.png)
+
+Now, whenever we call this method in our model (JavaScript file), the input is cleared out and due to the fact that we have two-way data binding between the model and the view, the user will now once again see a blank input field after successfully submitting their email address.
+
+Note: Other situations where you would want to clear out the input field after a successful submission of a form would be in the context of a todo list application or maybe a social media application where users submit posts. It would be bad UX if we didn’t clear the input field for the user in these cases.
+
+## Our example
+
+The example I’ll implement in code will be very similar to the above situation, but even a bit more simplified. Our app will do the following three things:
+
+1. We will have an input field where a user can type text
+2. We will dynamically display this text on the page
+3. We will have a button that the user can press to clear the text both in the input field as well as the text displayed on the page
+
+Note: this won’t really be a tutorial and we won’t explain how to set up projects and what all of the code means. We will just discuss it at a high level. The docs for React and Vue would do a better job explaining than me anyway.
+
+We will be creating this app in both React and Vue:
+
+![two_way_data4](/static/images/two_way_data_binding_in_react_and_vue/two_way_data4.png)
+
+And when the user clicks the Clear button, we are back where we started:
+
+![two_way_data5](/static/images/two_way_data_binding_in_react_and_vue/two_way_data5.png)
+
+## React Implementation
+
+Let’s cut right to the chase. Here is the React implementation:
+
+```js:App.js
+import { useState } from 'react';
+
+const App = () => {
+ const [userInput, setUserInput] = useState('');
+
+ const handleChange = (event) => {
+   setUserInput(event.target.value);
+ };
+
+ const clearInput = () => {
+   setUserInput('');
+ };
+
+ return (
+   <div style={{ margin: '20px' }}>
+     <input type="text" value={userInput} onChange={handleChange} />
+     <button onClick={clearInput}>Clear</button>
+     <p>{userInput}</p>
+   </div>
+ );
+};
+
+export default App;
+```
+
+First, we declare some state userInput in our ‘model’ (component) and link this to the ‘view’ (HTML template) via this line:
+
+```js
+<input value={userInput} />
+```
+
+Then, each time a user types a character into the input field, the ‘onChange’ event fires which we will handle in the handleChange method we defined:
+
+```js
+<input onChange={handleChange} />
+```
+
+Our handleChange method is implemented as follows:
+
+```js
+const handleChange = (event) => {
+  setUserInput(event.target.value)
+}
+```
+
+All that this method does is update our userInput state with the text currently present in our input field. So, if we type in the text “Tom”, then our handle change method will be called three times and our state will be updated three times as follows:
+
+1. T
+2. To
+3. Tom
+
+To get a better idea of what is in the event parameter passed to the handleChange method, try adding a console.log statement and view it in your browser’s console. I won’t cover it in this post, but it’s a good exercise to complete.
+
+```js
+const handleChange = (event) => {
+  console.log(event)
+  setUserInput(event.target.value)
+}
+```
+
+The current input in the userInput state is presented to the user in the template via this line:
+
+```js
+<p>{userInput}</p>
+```
+
+Lastly, we want to implement a mechanism for the user to clear the input from both the input field as well as the from the screen (in the paragraph element above).
+
+We do this with the following line and create a button element and hook it up to a clearInput element that we will define:
+
+```js
+<button onClick={clearInput}>Clear</button>
+```
+
+The clearInput method is defined below and is straightforward. It sets the userInput value back to an empty string.
+
+```js
+const clearInput = () => {
+  setUserInput('')
+}
+```
+
+And that’s all there is to it. By the way, if you are confused at what the setUserInput method is or where it comes from, I would suggest reading the useState section of the React docs.
+
+## Vue Implementation
+
+Here’s the same app in Vue:
+
+```js:App.vue
+<template>
+ <div>
+   <input v-model="userInput" type="text" />
+   <button @click="clearInput">Clear</button>
+   <p>{{ userInput }}</p>
+ </div>
+</template>
+
+<script>
+export default {
+ name: 'App',
+ data() {
+   return {
+     userInput: '',
+   };
+ },
+ methods: {
+   clearInput() {
+     this.userInput = '';
+   },
+ },
+};
+</script>
+```
+
+Much like the React example above, the first thing we can do is declare the userInput state in our ‘model’ (component). We declare the state like this in Vue if we are using the Options API:
+
+```js
+ data() {
+   return {
+     userInput: '',
+   };
+ },
+```
+
+Now, let’s hook our state into the HTML template and this is done like this in Vue:
+
+```js
+<input v-model="userInput" type="text" />
+```
+
+The v-model directive is how to achieve two way data binding in Vue. There is no need to create extra functions to manage the updating of the state like we did in React. Two-way data binding pretty much just comes right out of the box with Vue. In my opinion, Vue offers a far superior and more simple approach than React does when it comes to two-way data binding.
+
+Now, let’s display the current value in our userInput state from our model back to the template so that our user can see it updating on the screen below the input field.
+
+```js
+<p>{{ userInput }}</p>
+```
+
+Again, this is done primarily to illustrate that the data can flow both ways just as easily. Data goes from the template to the model and it also goes from the model to the template.
+
+Lastly, let’s create the button to clear the input value just as we did before in React. We hook the onClick event up to a method we will define called clearInput.
+
+```js
+<button @click="clearInput">Clear</button>
+```
+
+The clearInput method is defined as follows and its implementation is straightforward. It sets the userInput state back to an empty string.
+
+```js
+ methods: {
+   clearInput() {
+     this.userInput = '';
+   },
+ },
+```
+
+That finishes off our Vue implementation.
+
+## Conclusion
+
+In this post, we have briefly covered what two-way data binding is and also some basic situations where you would need two-way data binding in your application. We then implemented a very simple program in both React and Vue to demonstrate the differences between how two-way data is implemented in both frameworks. I concluded that it is easier to implement two-way data binding in Vue because of the built in v-model directive.
+
+I hope you enjoyed this post and I will see you in the next one.
